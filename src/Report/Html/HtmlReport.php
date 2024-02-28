@@ -36,10 +36,10 @@ final class HtmlReport implements ReportInterface
                 }
 
                 return 'coverage-low';
-            }
+            },
         ]);
 
-        if (!$html) {
+        if ($html === false || $html === '') {
             throw new \RuntimeException('Report could not be generated');
         }
 

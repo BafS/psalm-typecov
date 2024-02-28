@@ -1,23 +1,21 @@
 {
-    "name": "bafs/psalm-plugin-typecov",
-    "description": "Get nice type coverage reports",
-    "type": "psalm-plugin",
-    "license": "MIT",
-    "require": {
-        "php": ">=8.0",
-        "vimeo/psalm": "dev-master"
-    },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^3.3"
-    },
-    "autoload": {
-        "psr-4": {
-            "BafS\\PsalmTypecov\\": [
-                "src/"
-            ]
-        }
-    },
-    "scripts": {
-        "cs-check": "phpcs --extensions=php --standard=PSR12 src"
+  "name": "bafs/psalm-plugin-typecov",
+  "description": "Get nice type coverage reports",
+  "type": "psalm-plugin",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0",
+    "vimeo/psalm": "^5.0"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "BafS\\PsalmTypecov\\": ["src/"]
     }
+  },
+  "scripts": {
+    "cs-check": "phpcs --extensions=php --standard=PSR12 src"
+  }
 }

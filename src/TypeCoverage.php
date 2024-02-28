@@ -16,6 +16,7 @@ use SimpleXMLElement;
 
 final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInterface
 {
+    /** @var array<string, mixed> */
     private static array $options = [];
 
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
@@ -30,9 +31,7 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
     /**
      * Called after analysis is complete
      */
-    public static function afterAnalysis(
-        AfterAnalysisEvent $event
-    ): void {
+    public static function afterAnalysis(AfterAnalysisEvent $event): void {
         $codebase = $event->getCodebase();
 
         self::createReporter()->generate(self::getNonMixedStats($codebase));

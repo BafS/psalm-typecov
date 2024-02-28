@@ -17,6 +17,10 @@ Register the plugin in psalm.xml:
     </plugins>
 ```
 
+You can run psalm (typically `./vendor/bin/psalm`) and the report will get generated on the fly.
+
+Note: If you have issues with missing files, try using the `--no-cache` flag.
+
 ## Screenshoot
 
 <center>
