@@ -5,7 +5,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "vimeo/psalm": "^5.0"
+    "vimeo/psalm": "^5.0 || ^6.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.3"
@@ -16,6 +16,7 @@
     }
   },
   "scripts": {
-    "cs-check": "phpcs --extensions=php --standard=PSR12 src"
+    "cs-check": "phpcs --extensions=php --standard=PSR12 src",
+    "psalm": "psalm --no-cache"
   }
 }

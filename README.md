@@ -19,7 +19,7 @@ Register the plugin in psalm.xml:
 
 You can run psalm (typically `./vendor/bin/psalm`) and the report will get generated on the fly.
 
-Note: If you have issues with missing files, try using the `--no-cache` flag.
+Note: If you want to always scan all the files, you need to use the `--no-cache` flag.
 
 ## Screenshoot
 
