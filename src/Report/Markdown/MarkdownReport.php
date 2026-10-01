@@ -8,6 +8,9 @@ use BafS\PsalmTypecov\Report\ReportInterface;
 
 final class MarkdownReport implements ReportInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private string $outputFile,
     ) {
@@ -53,6 +56,9 @@ final class MarkdownReport implements ReportInterface
         }
     }
 
+    /**
+     * @psalm-pure
+     */
     private static function formatPercentage(int $mixed_count, int $nonmixed_count): string
     {
         return number_format(100 * $nonmixed_count / ($mixed_count + $nonmixed_count), 3);

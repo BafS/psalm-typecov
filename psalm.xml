@@ -17,6 +17,7 @@
     <plugins>
         <pluginClass class="BafS\PsalmTypecov\TypeCoverage">
             <htmlReport output="typecov-report.html" />
+            <markdownReport output="typecov-report.md" />
         </pluginClass>
     </plugins>
 </psalm>

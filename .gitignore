@@ -1,3 +1,6 @@
 typecov-report.html
 vendor/
 .idea/
+typecov-report.md
+.phpunit.result.cache
+.phpunit.cache/

@@ -86,9 +86,9 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
 
     /**
      * @psalm-suppress InternalMethod
-     * @psalm-return iterable<string, array{int, int}> mixed vs non-mixed variables
+     * @psalm-return \Generator<string, array{int, int}, mixed, void> mixed vs non-mixed variables
      */
-    private static function getNonMixedStats(Codebase $codebase): iterable
+    private static function getNonMixedStats(Codebase $codebase): \Generator
     {
         // This logic is adapted from "Analyzer#getNonMixedStats"
 

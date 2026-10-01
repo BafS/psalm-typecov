@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Psalm ${{ matrix.psalm }} on PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.1', psalm: '^5.0' }
+          - { php: '8.3', psalm: '^5.0' }
+          - { php: '8.2', psalm: '^6.0' }
+          - { php: '8.4', psalm: '^6.0' }
+          - { php: '8.4', psalm: '^7.0@beta' }
+          - { php: '8.5', psalm: '^7.0@beta' }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "vimeo/psalm:${{ matrix.psalm }}" --no-update --no-interaction
+          composer update --no-interaction --no-progress
+
+      - name: Tests
+        run: vendor/bin/phpunit
+
+      # Dogfooding: the plugin analyzes its own code and reports its own type coverage
+      - name: Psalm
+        run: vendor/bin/psalm --no-cache --no-progress
+
+      - name: Type coverage summary
+        if: always()
+        run: |
+          if [ -f typecov-report.md ]; then
+            cat typecov-report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  code-style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - run: composer update --no-interaction --no-progress
+
+      - run: composer cs-check

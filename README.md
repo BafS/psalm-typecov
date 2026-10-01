@@ -27,6 +27,17 @@ You can run psalm (typically `./vendor/bin/psalm`) and the report will get gener
 
 Note: If you want to always scan all the files, you need to use the `--no-cache` flag.
 
+## Development
+
+```
+composer install
+composer test      # runs Psalm with the plugin on a fixture project
+composer psalm     # the plugin analyzes its own code and writes its own coverage report
+composer cs-check
+```
+
+CI runs the tests and the self-analysis on Psalm 5, 6 and 7.
+
 ## Screenshoot
 
 <center>

@@ -8,15 +8,22 @@
     "vimeo/psalm": "^5.0 || ^6.0 || ^7.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.3"
+    "squizlabs/php_codesniffer": "^3.3",
+    "phpunit/phpunit": "^9.6 || ^10.5 || ^11.5 || ^12.0"
   },
   "autoload": {
     "psr-4": {
       "BafS\\PsalmTypecov\\": ["src/"]
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "BafS\\PsalmTypecov\\Tests\\": "tests/"
+    }
+  },
   "scripts": {
-    "cs-check": "phpcs --extensions=php --standard=PSR12 src",
-    "psalm": "psalm --no-cache"
+    "cs-check": "phpcs --extensions=php --standard=PSR12 src tests",
+    "psalm": "psalm --no-cache",
+    "test": "phpunit"
   }
 }
