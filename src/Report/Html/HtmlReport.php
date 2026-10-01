@@ -9,12 +9,16 @@ use BafS\PsalmTypecov\Report\Thresholds;
 
 final class HtmlReport implements ReportInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private Thresholds $thresholds,
         private string $outputFile,
     ) {
     }
 
+    #[\Override]
     public function generate(iterable $result): void
     {
         $html = $this->render(__DIR__ . '/template/index.phtml', [
