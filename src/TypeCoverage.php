@@ -20,6 +20,7 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
     /** @var array<string, mixed> */
     private static array $options = [];
 
+    #[\Override]
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
         if (isset($config->htmlReport)) {
@@ -36,6 +37,7 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
     /**
      * Called after analysis is complete
      */
+    #[\Override]
     public static function afterAnalysis(AfterAnalysisEvent $event): void
     {
         $reporters = self::createReporters();

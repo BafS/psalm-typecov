@@ -15,6 +15,7 @@ final class Thresholds
     }
 
     /**
+     * @psalm-pure
      * @throws \InvalidArgumentException
      */
     public static function from(int $lowUpperBound, int $highLowerBound): self

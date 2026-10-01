@@ -5,7 +5,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "vimeo/psalm": "^5.0 || ^6.0"
+    "vimeo/psalm": "^5.0 || ^6.0 || ^7.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.3"
