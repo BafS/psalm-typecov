@@ -20,6 +20,8 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
     /** @var array<string, mixed> */
     private static array $options = [];
 
+    private static ?float $minFileCoverage = null;
+
     #[\Override]
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
@@ -31,6 +33,10 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
             self::$options['markdownReport'] = $this->extractOptionsFromElement($config->markdownReport);
         }
 
+        if (isset($config->minFileCoverage)) {
+            self::$minFileCoverage = self::parseMinFileCoverage((string) $config->minFileCoverage['value']);
+        }
+
         $registration->registerHooksFromClass(self::class);
     }
 
@@ -40,10 +46,11 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
     #[\Override]
     public static function afterAnalysis(AfterAnalysisEvent $event): void
     {
+        $minFileCoverage = self::$minFileCoverage;
         $reporters = self::createReporters();
 
-        if ($reporters === []) {
-            throw new \RuntimeException('No report set in the configuration');
+        if ($reporters === [] && $minFileCoverage === null) {
+            throw new \RuntimeException('No report or minFileCoverage set in the configuration');
         }
 
         // The stats are a generator, so collect them once for all reporters
@@ -52,6 +59,57 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
         foreach ($reporters as $reporter) {
             $reporter->generate($stats);
         }
+
+        if ($minFileCoverage !== null) {
+            self::checkMinFileCoverage($stats, $minFileCoverage);
+        }
+    }
+
+    /**
+     * @psalm-pure
+     */
+    private static function parseMinFileCoverage(string $value): float
+    {
+        if (!is_numeric($value) || $value < 0 || $value > 100) {
+            throw new \RuntimeException('"value" attribute of minFileCoverage must be a number between 0 and 100');
+        }
+
+        return (float) $value;
+    }
+
+    /**
+     * Lists files below the threshold on STDERR (STDOUT may carry a machine-readable Psalm report)
+     * and makes Psalm exit with code 2, the same code it uses when it finds errors.
+     *
+     * @param array<string, array{int, int}> $stats
+     */
+    private static function checkMinFileCoverage(array $stats, float $minFileCoverage): void
+    {
+        $failures = [];
+        foreach ($stats as $file_path => [$mixed_count, $nonmixed_count]) {
+            $percentage = 100 * $nonmixed_count / ($mixed_count + $nonmixed_count);
+
+            if ($percentage < $minFileCoverage) {
+                $failures[] = sprintf('  %s: %.2f%% (%d mixed)', $file_path, $percentage, $mixed_count);
+            }
+        }
+
+        if ($failures === []) {
+            return;
+        }
+
+        fwrite(STDERR, sprintf(
+            "\nType coverage is below %s%% in %d file(s):\n%s\n\n",
+            $minFileCoverage,
+            count($failures),
+            implode("\n", $failures),
+        ));
+
+        // Psalm counts errors and prints its summary before this hook runs, and exiting right away
+        // would skip writing its cache and --report files, so the exit code is overridden on shutdown.
+        register_shutdown_function(static function (): void {
+            exit(2);
+        });
     }
 
     /**

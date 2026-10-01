@@ -25,6 +25,18 @@ Use `markdownReport` instead of (or together with) `htmlReport` to get a Markdow
 
 You can run psalm (typically `./vendor/bin/psalm`) and the report will get generated on the fly.
 
+### Minimum coverage per file
+
+Add `minFileCoverage` to list the files whose type coverage is below a percentage and to make Psalm exit with code 2 (the code it uses for errors), for example in CI:
+
+```xml
+        <pluginClass class="BafS\PsalmTypecov\TypeCoverage">
+            <minFileCoverage value="80" />
+        </pluginClass>
+```
+
+It can be combined with a report or used alone.
+
 Note: If you want to always scan all the files, you need to use the `--no-cache` flag.
 
 ## Screenshoot
