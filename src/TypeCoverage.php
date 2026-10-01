@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BafS\PsalmTypecov;
 
 use BafS\PsalmTypecov\Report\Html\HtmlReport;
+use BafS\PsalmTypecov\Report\Markdown\MarkdownReport;
 use BafS\PsalmTypecov\Report\ReportInterface;
 use BafS\PsalmTypecov\Report\Thresholds;
 use Psalm\Codebase;
@@ -25,6 +26,10 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
             self::$options['htmlReport'] = $this->extractOptionsFromElement($config->htmlReport);
         }
 
+        if (isset($config->markdownReport)) {
+            self::$options['markdownReport'] = $this->extractOptionsFromElement($config->markdownReport);
+        }
+
         $registration->registerHooksFromClass(self::class);
     }
 
@@ -33,25 +38,48 @@ final class TypeCoverage implements AfterAnalysisInterface, PluginEntryPointInte
      */
     public static function afterAnalysis(AfterAnalysisEvent $event): void
     {
-        $codebase = $event->getCodebase();
+        $reporters = self::createReporters();
 
-        self::createReporter()->generate(self::getNonMixedStats($codebase));
+        if ($reporters === []) {
+            throw new \RuntimeException('No report set in the configuration');
+        }
+
+        // The stats are a generator, so collect them once for all reporters
+        $stats = iterator_to_array(self::getNonMixedStats($event->getCodebase()));
+
+        foreach ($reporters as $reporter) {
+            $reporter->generate($stats);
+        }
     }
 
-    private static function createReporter(): ReportInterface
+    /**
+     * @return list<ReportInterface>
+     */
+    private static function createReporters(): array
     {
-        if (isset(self::$options['htmlReport'])) {
-            if (!isset(self::$options['htmlReport']['output'])) {
-                throw new \RuntimeException('"output" attribute must be set in htmlReport');
-            }
+        $reporters = [];
 
-            return new HtmlReport(
+        if (isset(self::$options['htmlReport'])) {
+            $reporters[] = new HtmlReport(
                 Thresholds::from(50, 90),
-                self::$options['htmlReport']['output'],
+                self::getOutputOption('htmlReport'),
             );
         }
 
-        throw new \RuntimeException('No report set in the configuration');
+        if (isset(self::$options['markdownReport'])) {
+            $reporters[] = new MarkdownReport(self::getOutputOption('markdownReport'));
+        }
+
+        return $reporters;
+    }
+
+    private static function getOutputOption(string $report): string
+    {
+        if (!isset(self::$options[$report]['output'])) {
+            throw new \RuntimeException('"output" attribute must be set in ' . $report);
+        }
+
+        return (string) self::$options[$report]['output'];
     }
 
     /**

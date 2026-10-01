@@ -17,6 +17,12 @@ Register the plugin in psalm.xml:
     </plugins>
 ```
 
+Use `markdownReport` instead of (or together with) `htmlReport` to get a Markdown table, handy for pull request comments or a GitHub Actions job summary:
+
+```xml
+            <markdownReport output="typecov-report.md" />
+```
+
 You can run psalm (typically `./vendor/bin/psalm`) and the report will get generated on the fly.
 
 Note: If you want to always scan all the files, you need to use the `--no-cache` flag.
